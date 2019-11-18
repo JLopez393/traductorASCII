@@ -68,6 +68,7 @@ namespace Traductor_Ascii
             string[] caracter;
             string mensaje = "";
             int numero = 0;
+            byte bt;
             char letra;
             arreglo1.Clear();
             foreach (string item in arreglo)
@@ -83,10 +84,10 @@ namespace Traductor_Ascii
                     {
                         break;
                     }
-                    
+                   
                     letra = (char)numero;
                     Console.WriteLine(i);
-                    mensaje = mensaje + Encoding.GetEncoding(437).GetString(Encoding.GetEncoding(437).GetBytes(letra.ToString()));
+                    mensaje = mensaje + Encoding.GetEncoding(437).GetString(new byte[] { Convert.ToByte(numero) });
                     arreglo1.Add(mensaje);
                 }
             }
