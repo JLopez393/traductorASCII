@@ -16,12 +16,53 @@ namespace Traductor_Ascii
     public partial class Form1 : Form
     {
         ArrayList arreglo = new ArrayList();
+        ArrayList arreglo1 = new ArrayList();
+        int tipo = 0;
         public Form1()
         {
             InitializeComponent();
         }
+        
+        private void btn_Traducir_Click(object sender, EventArgs e)
+        {
+           if(tipo == 1)
+            {
 
-        private void importarArchivoToolStripMenuItem_Click(object sender, EventArgs e)
+            }else if (tipo == 2)
+            {
+                arreglo.Clear();
+                if (!string.IsNullOrEmpty(txt_A_Traducir.Text))
+                {
+                    traduce();
+                }
+                else
+                {
+                    lbl_Alert.Text = "Ingrese algún texto";
+                }
+            }
+        }
+
+
+        private void traduce()
+        {
+            string caracter = "", mensaje="";
+            foreach (string item in arreglo)
+            {
+                for (int i = 0; i < item.Length; i++)
+                {
+                    caracter = item.Substring(i, 1);
+                    mensaje = mensaje + Encoding.ASCII.GetBytes(caracter.ToString())[0] + " ";
+                    arreglo1.Add(mensaje);
+                    //Console.WriteLine();
+                }
+            }
+            foreach (var item in arreglo1)
+            {
+                lbl_Traducido.Text = item.ToString();
+            }
+        }
+        
+        private void importarArchivoToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             string linea = "";
             OpenFileDialog dialog = new OpenFileDialog();
@@ -31,7 +72,8 @@ namespace Traductor_Ascii
             if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 StreamReader archivo = new StreamReader(dialog.FileName, enc);
-                while (!archivo.EndOfStream) {
+                while (!archivo.EndOfStream)
+                {
                     linea = @archivo.ReadLine().ToString() + Environment.NewLine;
                     arreglo.Add(linea);
                 }
@@ -42,39 +84,42 @@ namespace Traductor_Ascii
             }
         }
 
-        private void btn_Traducir_Click(object sender, EventArgs e)
+        private void exportarArchivoToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(txt_A_Traducir.Text))
+            if (!string.IsNullOrEmpty(lbl_Traducido.Text))
             {
-                traduce();
-                arreglo.Clear();
-                txt_A_Traducir.Text = null;
-            }else
-            {
-                lbl_Alert.Text = "Ingrese algún texto";
-                int cont = 0;
-                while (cont !=2) {
-                    cont++;
-                    Thread.Sleep(1000);
-                    if (cont == 2) lbl_Alert.Text = "";
+                SaveFileDialog save = new SaveFileDialog();
+                save.FileName = "prueba.txt";
+                // filtros
+                save.Filter = "Archivos de texto (*.txt)|*.txt|Todos los archivos (*.*)|*.*";
+                if (save.ShowDialog() == DialogResult.OK)
+                {
+                    StreamWriter w = new StreamWriter(save.FileName);
+
+                    w.WriteLine(lbl_Traducido.Text);
+                    w.Close();
                 }
-                
-               // lbl_Alert.Text = "";
             }
+            else lbl_Alert.Text = "Ingrese algún texto";
         }
 
-
-        private void traduce()
+        private void aSCIIACaracterToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string caracter = "";
-            foreach (string item in arreglo)
-            {
-                for (int i = 0; i < item.Length; i++)
-                {
-                    caracter = item.Substring(i, 1);
-                    Console.WriteLine(Encoding.ASCII.GetBytes(caracter.ToString())[0]);
-                }
-            }
+            tipo = 1;
+            accionesToolStripMenuItem.Enabled = true;
+            lbl_Alert.Enabled = true;
+            lbl_Traducido.Enabled = true;
+            txt_A_Traducir.Enabled = true;
+            btn_Traducir.Enabled = true;
+        }
+        private void caracterAASCIIToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            tipo = 2;
+            accionesToolStripMenuItem.Enabled = true;
+            lbl_Alert.Enabled = true;
+            lbl_Traducido.Enabled = true;
+            txt_A_Traducir.Enabled = true;
+            btn_Traducir.Enabled = true;
         }
     }
 }
