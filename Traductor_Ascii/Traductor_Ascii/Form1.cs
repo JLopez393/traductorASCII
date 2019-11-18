@@ -25,35 +25,69 @@ namespace Traductor_Ascii
         
         private void btn_Traducir_Click(object sender, EventArgs e)
         {
-           if(tipo == 1)
+            if (!string.IsNullOrEmpty(txt_A_Traducir.Text))
             {
-
-            }else if (tipo == 2)
+                if (tipo == 1)
+                {
+                    traduceAscii_Caracter();
+                } else if (tipo == 2)
+                {
+                    traduceCaracter_Ascii();
+                }
+            }
+            else
             {
-                arreglo.Clear();
-                if (!string.IsNullOrEmpty(txt_A_Traducir.Text))
-                {
-                    traduce();
-                }
-                else
-                {
-                    lbl_Alert.Text = "Ingrese algún texto";
-                }
+                lbl_Alert.Text = "Ingrese algún texto";
             }
         }
 
 
-        private void traduce()
+        private void traduceCaracter_Ascii()
         {
             string caracter = "", mensaje="";
+            arreglo1.Clear();
             foreach (string item in arreglo)
             {
                 for (int i = 0; i < item.Length; i++)
                 {
                     caracter = item.Substring(i, 1);
-                    mensaje = mensaje + Encoding.ASCII.GetBytes(caracter.ToString())[0] + " ";
+                    mensaje = mensaje + Asc(caracter.ToString()) + " ";
+                    //mensaje = mensaje + Encoding.ASCII.GetBytes(caracter.ToString())[0] + " ";
                     arreglo1.Add(mensaje);
                     //Console.WriteLine();
+                }
+            }
+            foreach (var item in arreglo1)
+            {
+                lbl_Traducido.Text = item.ToString();
+            }
+        }
+
+        private void traduceAscii_Caracter()
+        {
+            string[] caracter;
+            string mensaje = "";
+            int numero = 0;
+            char letra;
+            arreglo1.Clear();
+            foreach (string item in arreglo)
+            {
+                for (int i = 0; i < item.Length-1; i++)
+                {
+                    caracter = item.ToString().Split(' ');
+                    try
+                    {
+                        numero = Convert.ToInt16(caracter[i]);
+                    }
+                    catch (FormatException)
+                    {
+                        break;
+                    }
+                    
+                    letra = (char)numero;
+                    Console.WriteLine(i);
+                    mensaje = mensaje + Encoding.GetEncoding(437).GetString(Encoding.GetEncoding(437).GetBytes(letra.ToString()));
+                    arreglo1.Add(mensaje);
                 }
             }
             foreach (var item in arreglo1)
@@ -74,7 +108,7 @@ namespace Traductor_Ascii
                 StreamReader archivo = new StreamReader(dialog.FileName, enc);
                 while (!archivo.EndOfStream)
                 {
-                    linea = @archivo.ReadLine().ToString() + Environment.NewLine;
+                    linea = archivo.ReadLine().ToString();
                     arreglo.Add(linea);
                 }
             }
@@ -83,7 +117,6 @@ namespace Traductor_Ascii
                 txt_A_Traducir.Text = item.ToString();
             }
         }
-
         private void exportarArchivoToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(lbl_Traducido.Text))
@@ -121,5 +154,10 @@ namespace Traductor_Ascii
             txt_A_Traducir.Enabled = true;
             btn_Traducir.Enabled = true;
         }
+        public static int Asc(string s)
+        {
+            return Encoding.GetEncoding(437).GetBytes(s)[0];
+        }
+        
     }
 }
